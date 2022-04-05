@@ -21,6 +21,8 @@ class Item(Published):
 
 
 class Tag(Slug):
+    name = models.CharField('имя тэга', max_length=150)
+
     class Meta:
         verbose_name = 'тэг'
         verbose_name_plural = 'тэги'
