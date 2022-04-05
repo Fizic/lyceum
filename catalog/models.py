@@ -32,6 +32,7 @@ class Tag(Slug):
 
 
 class Category(Slug):
+    name = models.CharField('название категории', max_length=150)
     weight = models.PositiveSmallIntegerField("масса", default=100)
 
     class Meta:

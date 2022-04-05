@@ -2,18 +2,7 @@
 
 {% block title %}Главная{% endblock %}
 
-{% block content %}Главная
-    {% if items %}
-        {% for item in items %}
-            <h2>{{ item.name }}</h2>
-            {{ item.text|truncatewords:10 }}
-            <h4>tags</h4>
-            {% for tag in item.tags.name %}
-                {{ tag }}
-            {% endfor %}
-        {% endfor %}
-    {% else %}
-        <h3>Список пуст. Эй, админ, добавь инфы!<h1>
-    {% endif %}
-
+{% block content %}
+    Главная
+    {% include "base_item_list.html" %}
 {% endblock %}

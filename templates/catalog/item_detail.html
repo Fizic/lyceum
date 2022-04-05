@@ -2,4 +2,13 @@
 
 {% block title %}Подробно элемент{% endblock %}
 
-{% block content %}Подробно элемент{% endblock %}
+{% block content %}
+    Подробно элемент
+    <h1>{{ item.name }}</h1>
+    {% if item.category %}
+        {{ item.category }}
+    {% endif %}
+    {{ item.text }}
+    <h3>tags</h3>
+    {{ item.tags.all|join:" " }}
+{% endblock %}
