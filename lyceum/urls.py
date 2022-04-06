@@ -20,7 +20,6 @@ from django.urls import path, include
 from lyceum import settings
 
 urlpatterns = [
-
     path('admin/', admin.site.urls, name='admin'),
     path('catalog/', include('catalog.urls'), name='catalog'),
     path('about/', include('about.urls'), name='about'),
