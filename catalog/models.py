@@ -3,7 +3,7 @@ import random
 from django.db import models
 
 from core.models import Published, Slug
-from . import validators
+from . import validators, managers
 
 
 class Item(Published):
@@ -11,7 +11,7 @@ class Item(Published):
     text = models.TextField(verbose_name="описание", validators=[validators.text_validator],
                             default=random.choice(["роскошно", "превосходно"]))
     category = models.ForeignKey(to="Category", verbose_name="категория", on_delete=models.SET_NULL,
-                                 related_name="catalog_items", null=True, blank=True)
+                                 related_name="category_items", null=True, blank=True)
     tags = models.ManyToManyField(to="Tag", verbose_name="тэги", related_name="catalog_items", blank=True)
 
     class Meta:
@@ -34,6 +34,7 @@ class Tag(Slug):
 
 
 class Category(Slug):
+    catalog_item_objects = managers.CatalogManager()
     name = models.CharField("название категории", max_length=150)
     weight = models.PositiveSmallIntegerField("масса", default=100)
 

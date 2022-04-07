@@ -1,15 +1,12 @@
 from django.db.models import Prefetch
-from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from catalog import models
-from django.core.exceptions import ObjectDoesNotExist
 
 
 def item_list(request):
     template = "catalog/item_list.html"
-    items = models.Item.objects.prefetch_related(
-        Prefetch("tags", queryset=models.Tag.objects.filter(is_published=True))).order_by("?").filter(is_published=True)
-    context = {"items": items}
+    categories = models.Category.catalog_item_objects.filter(is_published=True)
+    context = {"categories": categories}
 
     return render(request, template, context)
 
