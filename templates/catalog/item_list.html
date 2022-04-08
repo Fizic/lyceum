@@ -6,8 +6,8 @@
     Список элементов
     {% for category in categories %}
         <h1>{{ category.name }}</h1>
-        {% if category.category_items %}
-            {% for item in category.category_items.all %}
+        {% if category.catalog_items %}
+            {% for item in category.catalog_items.all %}
                 {% include "includes/base_item_list.html" %}
             {% endfor %}
         {% endif %}

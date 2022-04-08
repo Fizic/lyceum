@@ -11,7 +11,7 @@ class Item(Published):
     text = models.TextField(verbose_name="описание", validators=[validators.text_validator],
                             default=random.choice(["роскошно", "превосходно"]))
     category = models.ForeignKey(to="Category", verbose_name="категория", on_delete=models.SET_NULL,
-                                 related_name="category_items", null=True, blank=True)
+                                 related_name="catalog_items", null=True, blank=True)
     tags = models.ManyToManyField(to="Tag", verbose_name="тэги", related_name="catalog_items", blank=True)
 
     class Meta:
