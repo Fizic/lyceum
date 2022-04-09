@@ -7,9 +7,11 @@
     {% for category in categories %}
         <h1>{{ category.name }}</h1>
         {% if category.catalog_items %}
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             {% for item in category.catalog_items.all %}
                 {% include "includes/base_item_list.html" %}
             {% endfor %}
+            </div>
         {% endif %}
     {% endfor %}
 {% endblock %}

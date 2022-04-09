@@ -5,7 +5,7 @@ from catalog.models import Item, Category, Tag
 
 def item_list(request):
     template = "catalog/item_list.html"
-    categories = Category.catalog_item_objects.filter(is_published=True)
+    categories = Item.catalog_item_objects.all()
     context = {"categories": categories}
 
     return render(request, template, context)

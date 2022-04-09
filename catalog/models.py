@@ -1,12 +1,34 @@
 import random
 
 from django.db import models
+from django.db.models import Prefetch
 
 from core.models import Published, Slug
-from . import validators, managers
+from . import validators
+
+
+class Category(Slug):
+    name = models.CharField("название категории", max_length=150)
+    weight = models.PositiveSmallIntegerField("масса", default=100)
+
+    class Meta:
+        verbose_name = "категория"
+        verbose_name_plural = "категории"
+
+    def __str__(self):
+        return str(self.slug)
+
+
+class ItemManager(models.Manager):
+    def get_queryset(self):
+        return Category.objects.prefetch_related(
+            Prefetch("catalog_items", queryset=Item.objects.filter(is_published=True).only("tags__name"))).filter(
+            is_published=True).order_by("weight")
 
 
 class Item(Published):
+    objects = models.Manager()
+    catalog_item_objects = ItemManager()
     name = models.CharField("имя товара", max_length=150)
     text = models.TextField(verbose_name="описание", validators=[validators.text_validator],
                             default=random.choice(["роскошно", "превосходно"]))
@@ -28,19 +50,6 @@ class Tag(Slug):
     class Meta:
         verbose_name = "тэг"
         verbose_name_plural = "тэги"
-
-    def __str__(self):
-        return str(self.slug)
-
-
-class Category(Slug):
-    catalog_item_objects = managers.CatalogManager()
-    name = models.CharField("название категории", max_length=150)
-    weight = models.PositiveSmallIntegerField("масса", default=100)
-
-    class Meta:
-        verbose_name = "категория"
-        verbose_name_plural = "категории"
 
     def __str__(self):
         return str(self.slug)
