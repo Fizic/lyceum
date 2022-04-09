@@ -1,12 +1,13 @@
 from django.db.models import Prefetch
 from django.shortcuts import render
 
-from catalog import models
+from catalog.models import Item, Category, Tag
 
 
 def home(request):
     template = "homepage/home.html"
-    items = models.Item.objects.prefetch_related(Prefetch("tags", queryset=models.Tag.objects.filter(is_published=True))).filter(is_published=True).order_by("?")[:3]
+    items = Item.objects.prefetch_related(Prefetch("tags", queryset=Tag.objects.filter(is_published=True))).filter(
+        is_published=True).order_by("?").only("name", "text", "tags__name")[:3]
     context = {"items": items}
 
     return render(request, template, context)
