@@ -22,7 +22,8 @@ class Category(Slug):
 class ItemManager(models.Manager):
     def get_queryset(self):
         return Category.objects.prefetch_related(
-            Prefetch("catalog_items", queryset=Item.objects.filter(is_published=True).only("tags__name"))).filter(
+            Prefetch("catalog_items", queryset=Item.objects.filter(is_published=True).prefetch_related(
+                Prefetch("tags", queryset=Tag.objects.filter(is_published=True))).only("tags__name"))).filter(
             is_published=True).order_by("weight")
 
 
