@@ -14,14 +14,14 @@ admin.site.register(models.Item, ItemAdmin)
 
 
 class TagAdmin(admin.ModelAdmin):
-    fields = ('is_published', 'slug')
+    fields = ('is_published', 'slug', 'name')
 
 
 admin.site.register(models.Tag, TagAdmin)
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    fields = ('is_published', 'slug', 'weight')
+    fields = ('is_published', 'slug', 'name', 'weight')
 
 
 admin.site.register(models.Category, CategoryAdmin)
