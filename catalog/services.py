@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Prefetch, Avg
 from django.shortcuts import get_object_or_404
 
@@ -23,8 +24,12 @@ def get_item_information(request, item_id: int) -> dict:
     )
 
     all_rating_for_item = Rating.objects.filter(item_id=item_id)
-    average_rating = all_rating_for_item.aggregate(Avg('star'))["star__avg"]
     rating_count = all_rating_for_item.count()
+
+    if rating_count:
+        average_rating = all_rating_for_item.aggregate(Avg('star'))["star__avg"]
+    else:
+        average_rating = 0
 
     context = {
         "item": item,
@@ -34,7 +39,10 @@ def get_item_information(request, item_id: int) -> dict:
 
     if request.user.is_authenticated:
         context["user"] = request.user
-        context["rating"] = get_object_or_404(Rating.objects, user=request.user, item_id=item_id)
+        try:
+            context["rating"] = Rating.objects.get(user=request.user, item_id=item_id)
+        except ObjectDoesNotExist:
+            context["rating"] = {"star": 0}
         context["form"] = RatingForm()
 
     return context
