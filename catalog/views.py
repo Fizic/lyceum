@@ -28,11 +28,11 @@ class ItemDetailView(View):
 
     def post(self, request, pk: int):
         form = RatingForm(request.POST)
-        if form.is_valid():
-            rating = get_object_or_404(Rating.objects, user=request.user, item_id=pk)
-            rating.star = int(form.cleaned_data["rating"][0])
-            rating.save()
-
-            return HttpResponseRedirect("/auth/users/{user_id}/".format(user_id=request.user.id))
-        else:
+        if not form.is_valid():
             return HttpResponse("Sorry we can't process your request.")
+
+        rating = Rating.objects.get_or_create(user=request.user, item_id=pk)[0]
+        rating.star = int(form.cleaned_data["rating"][0])
+        rating.save()
+
+        return HttpResponseRedirect("/auth/users/{user_id}/".format(user_id=request.user.id))
