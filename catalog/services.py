@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Prefetch, Avg
 from django.shortcuts import get_object_or_404
 
