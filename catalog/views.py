@@ -29,10 +29,12 @@ class ItemDetailView(View):
     def post(self, request, pk: int):
         form = RatingForm(request.POST)
         if not form.is_valid():
-            return HttpResponse("Sorry we can't process your request.")
+            return HttpResponse("Rating must be between 0 and 5")
+
+        print(request.POST)
 
         rating = Rating.objects.get_or_create(user=request.user, item_id=pk)[0]
         rating.star = int(form.cleaned_data["rating"][0])
         rating.save()
 
-        return HttpResponseRedirect("/auth/users/{user_id}/".format(user_id=request.user.id))
+        return HttpResponseRedirect("/catalog/{pk}/".format(pk=pk))

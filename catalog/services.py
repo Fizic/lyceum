@@ -37,12 +37,14 @@ def get_item_information(request, item_id: int) -> dict:
         "rating_count": rating_count
     }
 
-    if request.user.is_authenticated:
-        context["user"] = request.user
-        try:
-            context["rating"] = Rating.objects.get(user=request.user, item_id=item_id)
-        except ObjectDoesNotExist:
-            context["rating"] = {"star": 0}
-        context["form"] = RatingForm()
+    if not request.user.is_authenticated:
+        return context
+
+    context["form"] = RatingForm()
+    context["user"] = request.user
+    if all_rating_for_item.filter(user=request.user).count():
+        context["rating"] = Rating.objects.get(user=request.user, item_id=item_id)
+    else:
+        context["rating"] = {"star": 0}
 
     return context
