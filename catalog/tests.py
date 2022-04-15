@@ -32,7 +32,7 @@ class ItemDetailTest(TestCase):
         """
         Если пользователь попытается отправить форму не из графического интерфейса
         """
-        csrf_client = Client()
-        csrf_client.login(username="admin", password="admin")
-        response = csrf_client.post("/catalog/1/", data={"rating": ["6"]})
+        client = Client()
+        client.login(username="admin", password="admin")
+        response = client.post("/catalog/1/", data={"rating": ["6"]})
         self.assertEqual(response.content, b"Rating must be between 0 and 5")
