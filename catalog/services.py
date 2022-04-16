@@ -22,7 +22,7 @@ def get_item_information(request, item_id: int) -> dict:
         ).only("name", "text", "category__name", "tags__name"), id=item_id
     )
 
-    all_rating_for_item = Rating.objects.filter(item_id=item_id)
+    all_rating_for_item = item.rating.filter(star__gt=0)
     rating_count = all_rating_for_item.count()
 
     if rating_count:
@@ -41,9 +41,10 @@ def get_item_information(request, item_id: int) -> dict:
 
     context["form"] = RatingForm()
     context["user"] = request.user
-    if all_rating_for_item.filter(user=request.user).count():
-        context["rating"] = Rating.objects.get(user=request.user, item_id=item_id)
-    else:
-        context["rating"] = {"star": 0}
+
+    context["rating"], created = Rating.objects.get_or_create(user=request.user, item_id=item_id)
+    if created:
+        context["rating"].star = 0
+        context["rating"].save()
 
     return context

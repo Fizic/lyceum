@@ -1,6 +1,6 @@
 from django.db.models import Prefetch
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 
 from catalog.models import Tag, Item
@@ -31,10 +31,8 @@ class ItemDetailView(View):
         if not form.is_valid():
             return HttpResponse("Rating must be between 0 and 5")
 
-        print(request.POST)
-
         rating = Rating.objects.get_or_create(user=request.user, item_id=pk)[0]
         rating.star = int(form.cleaned_data["rating"][0])
         rating.save()
 
-        return HttpResponseRedirect("/catalog/{pk}/".format(pk=pk))
+        return redirect("catalog:item-detail", pk=pk)
