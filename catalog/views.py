@@ -1,6 +1,12 @@
 from django.db.models import Prefetch
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.views import View
+
 from catalog.models import Tag, Item
+from rating.models import Rating
+from catalog.forms import RatingForm
+from catalog.services import get_item_information
 
 
 def item_list(request):
@@ -14,15 +20,19 @@ def item_list(request):
     return render(request, template, context)
 
 
-def item_detail(request, pk: int):
-    template = "catalog/item_detail.html"
-    item = get_object_or_404(
-        Item.objects.prefetch_related(
-            Prefetch("tags", queryset=Tag.objects.filter(is_published=True))
-        ).select_related(
-            "category"
-        ).only("name", "text", "category__name", "tags__name"), id=pk
-    )
-    context = {"item": item}
+class ItemDetailView(View):
+    def get(self, request, pk: int):
+        template = "catalog/item_detail.html"
+        context = get_item_information(request, pk)
+        return render(request, template, context)
 
-    return render(request, template, context)
+    def post(self, request, pk: int):
+        form = RatingForm(request.POST)
+        if not form.is_valid():
+            return HttpResponse("Rating must be between 0 and 5")
+
+        rating = Rating.objects.get_or_create(user=request.user, item_id=pk)[0]
+        rating.star = int(form.cleaned_data["rating"][0])
+        rating.save()
+
+        return redirect("catalog:item-detail", pk=pk)
