@@ -2,4 +2,8 @@
 
 {% block title %}Список пользователей{% endblock %}
 
-{% block content %}Список пользователей{% endblock %}
+{% block content %}
+    {% for user in users %}
+        <h6>{{ user }}</h6>
+    {% endfor %}
+{% endblock %}
