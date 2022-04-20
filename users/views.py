@@ -1,12 +1,15 @@
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.utils.crypto import pbkdf2
 from django.views import View
 from django.utils.decorators import method_decorator
 
-from users.forms import ProfileForm
+from users.forms import ProfileForm, EmailAuthentication
 from users.models import UserWithBirthday
 from users.services import get_profile_data
 
@@ -24,6 +27,24 @@ def user_detail(request, pk: int):
     ratings = user.rating.filter(star=5).select_related("item").only("item__name")
     context = {"user": user, "ratings": ratings}
     return render(request, template, context)
+
+
+class LoginView(View):
+    def get(self, request):
+        template = "users/login.html"
+        context = {"form": EmailAuthentication()}
+        return render(request, template, context)
+
+    def post(self, request):
+        form = EmailAuthentication(request.POST)
+        if not form.is_valid():
+            template = "users/login.html"
+            context = {"form": EmailAuthentication(), "errors": form.errors}
+            return render(request, template, context)
+        try:
+            user = UserWithBirthday.objects.get(authentication_email=form.cleaned_data["email"])
+        except ObjectDoesNotExist:
+            return HttpResponse('123')
 
 
 class SignUp(View):
@@ -59,8 +80,8 @@ class Profile(View):
             return render(request, template, context)
 
         user = request.user
-        if form.cleaned_data["email"]:
-            user.email = form.cleaned_data["email"]
+        if form.cleaned_data["authentication_email"]:
+            user.authentication_email = form.cleaned_data["authentication_email"]
         if form.cleaned_data["first_name"]:
             user.first_name = form.cleaned_data["first_name"]
         user.save()
