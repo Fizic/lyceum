@@ -10,5 +10,5 @@ class UserWithBirthday(models.Model):
         return str(self.user)
 
     class Meta:
-        verbose_name = "User with birthday"
-        verbose_name_plural = "Users with birthday"
+        verbose_name = "Расширенный пользователь"
+        verbose_name_plural = "Расширенные пользователи"
