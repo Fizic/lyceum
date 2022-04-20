@@ -2,4 +2,15 @@
 
 {% block title %}Информация о пользователе{% endblock %}
 
-{% block content %}Информация о пользователе{% endblock %}
+{% block content %}
+    <h3>Email</h3>
+    {{ user.email }}
+    <h3>Имя</h3>
+    {{ user.first_name }}
+    <h3>Фамилия</h3>
+    {{ user.last_name }}
+    <h3>Любимые товары</h3>
+    {% for rating in ratings %}
+        {{ rating.item }}
+    {% endfor %}
+{% endblock %}

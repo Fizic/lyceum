@@ -2,4 +2,10 @@
 
 {% block title %}Мой профиль{% endblock %}
 
-{% block content %}Мой профиль{% endblock %}
+{% block content %}
+    <h3>Любимые товары</h3>
+    {% for rating in ratings %}
+        {{ rating.item }}
+    {% endfor %}
+    {% include "users/form.html" %}
+{% endblock %}

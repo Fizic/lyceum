@@ -1,5 +1,5 @@
 from django.db.models import Prefetch
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
