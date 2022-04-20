@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 
 from users.forms import ProfileForm
 from users.models import UserWithBirthday
+from users.services import get_profile_data
 
 
 def user_list(request):
@@ -34,7 +35,9 @@ class SignUp(View):
     def post(self, request):
         form = UserCreationForm(request.POST)
         if not form.is_valid():
-            return HttpResponse("Форма заполнена не правильно")
+            template = "users/signup.html"
+            context = {"form": UserCreationForm(), "errors": form.errors}
+            return render(request, template, context)
 
         form.save()
         return redirect("users:login")
@@ -44,16 +47,16 @@ class SignUp(View):
 class Profile(View):
     def get(self, request):
         template = "users/profile.html"
-        user = request.user
-        ratings = user.rating.filter(star=5).select_related("item").only("item__name")
-        form = ProfileForm()
-        context = {"user": user, "ratings": ratings, "form": form}
+        context = get_profile_data(request)
         return render(request, template, context)
 
     def post(self, request):
         form = ProfileForm(request.POST)
         if not form.is_valid():
-            return HttpResponse("Форма заполнена не правильно")
+            template = "users/profile.html"
+            context = get_profile_data(request)
+            context['errors'] = form.errors
+            return render(request, template, context)
 
         user = request.user
         if form.cleaned_data["email"]:

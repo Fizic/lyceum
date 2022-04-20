@@ -5,4 +5,6 @@
 {% block content %}
     Регистрация
     {% include "users/form.html" %}
+    <a href="../password_reset/">Забыли пароль?</a>
+    {{ errors }}
 {% endblock %}

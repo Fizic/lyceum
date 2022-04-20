@@ -2,4 +2,8 @@
 
 {% block title %}Login{% endblock %}
 
-{% block content %}{% include "users/form.html" %}{% endblock %}
+{% block content %}
+    Логин
+    {% include "users/form.html" %}
+    <a href="../password_reset/">Забыли пароль?</a>
+{% endblock %}

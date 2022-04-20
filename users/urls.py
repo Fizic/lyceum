@@ -18,10 +18,10 @@ urlpatterns = [
          name='password_change_done'),
     path('password_reset/', PasswordResetView.as_view(template_name='users/password_reset.html'),
          name='password_reset'),
-    path('password_reset/done', PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'),
+    path('password_reset/done/', PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'),
          name='password_reset_done'),
     path('reset/', PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'),
          name='password_reset_confirm'),
-    path('reset/done', PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
+    path('reset/done/', PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
          name='password_reset_complete'),
 ]
