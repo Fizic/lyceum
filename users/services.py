@@ -1,9 +1,11 @@
 from django.contrib.auth.backends import BaseBackend, UserModel, ModelBackend
-from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 from users.forms import ProfileForm
-from users.models import UserWithBirthday
+from users.models import ExtendedUser
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 def get_profile_data(request) -> dict:
@@ -15,10 +17,9 @@ def get_profile_data(request) -> dict:
 
 
 class EmailAuthenticationBackend(ModelBackend):
-    def authenticate(self, request, username=None, password=None):
+    def authenticate(self, request, email=None, password=None):
         try:
-            user_with_birthday = UserWithBirthday.objects.get(authentication_email=username)
-            user = User.objects.get(extend_user=user_with_birthday)
+            user = ExtendedUser.objects.get(email=email)
             if user.check_password(password):
                 return user
             else:

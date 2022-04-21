@@ -4,7 +4,8 @@ from django.db.models import UniqueConstraint
 
 
 class Rating(models.Model):
-    user = models.ForeignKey(User, verbose_name="пользователь", on_delete=models.CASCADE, related_name="rating")
+    user = models.ForeignKey(to="users.ExtendedUser", verbose_name="пользователь", on_delete=models.CASCADE,
+                             related_name="rating")
     item = models.ForeignKey(to='catalog.Item', verbose_name="товар", on_delete=models.CASCADE, related_name="rating")
 
     class Feeling(models.IntegerChoices):

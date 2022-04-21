@@ -2,15 +2,12 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.utils.crypto import pbkdf2
 from django.views import View
 from django.utils.decorators import method_decorator
 
 from users.forms import ProfileForm, EmailAuthentication
-from users.models import UserWithBirthday
+from users.models import ExtendedUser
 from users.services import get_profile_data
 
 
@@ -27,24 +24,6 @@ def user_detail(request, pk: int):
     ratings = user.rating.filter(star=5).select_related("item").only("item__name")
     context = {"user": user, "ratings": ratings}
     return render(request, template, context)
-
-
-class LoginView(View):
-    def get(self, request):
-        template = "users/login.html"
-        context = {"form": EmailAuthentication()}
-        return render(request, template, context)
-
-    def post(self, request):
-        form = EmailAuthentication(request.POST)
-        if not form.is_valid():
-            template = "users/login.html"
-            context = {"form": EmailAuthentication(), "errors": form.errors}
-            return render(request, template, context)
-        try:
-            user = UserWithBirthday.objects.get(authentication_email=form.cleaned_data["email"])
-        except ObjectDoesNotExist:
-            return HttpResponse('123')
 
 
 class SignUp(View):
@@ -64,7 +43,35 @@ class SignUp(View):
         return redirect("users:login")
 
 
-@method_decorator(login_required, name='get')
+class LoginView(View):
+    def get(self, request):
+        template = "users/login.html"
+        form = EmailAuthentication()
+        context = {"form": form}
+        return render(request, template, context)
+
+    def post(self, request):
+        form = EmailAuthentication(request.POST)
+        if not form.is_valid():
+            template = "users/login.html"
+            form = EmailAuthentication()
+            context = {"from": form, "errors": form.errors}
+            return render(request, template, context)
+
+        email = form.cleaned_data['email']
+        password = form.cleaned_data['password']
+        user = authenticate(request, email=email, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect("users:profile")
+
+        template = "users/login.html"
+        form = EmailAuthentication()
+        context = {"from": form, "errors": ["Неверный пароль или email"]}
+        return render(request, template, context)
+
+
+@method_decorator(login_required, name="get")
 class Profile(View):
     def get(self, request):
         template = "users/profile.html"
@@ -76,7 +83,7 @@ class Profile(View):
         if not form.is_valid():
             template = "users/profile.html"
             context = get_profile_data(request)
-            context['errors'] = form.errors
+            context["errors"] = form.errors
             return render(request, template, context)
 
         user = request.user
@@ -87,8 +94,8 @@ class Profile(View):
         user.save()
 
         if form.cleaned_data["birth_day"]:
-            user_with_birthday = UserWithBirthday.objects.get_or_create(user=user)[0]
+            user_with_birthday = ExtendedUser.objects.get_or_create(user=user)[0]
             user_with_birthday.birthday = form.cleaned_data["birth_day"]
             user_with_birthday.save()
 
-        return redirect('users:profile')
+        return redirect("users:profile")
