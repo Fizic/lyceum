@@ -1,14 +1,15 @@
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views import View
 from django.utils.decorators import method_decorator
 
-from users.forms import ProfileForm, EmailAuthentication
+from users.forms import ProfileForm, EmailAuthentication, CustomUserCreationForm
 from users.models import ExtendedUser
 from users.services import get_profile_data
+
+User = get_user_model()
 
 
 def user_list(request):
@@ -29,11 +30,11 @@ def user_detail(request, pk: int):
 class SignUp(View):
     def get(self, request):
         template = "users/signup.html"
-        context = {"form": UserCreationForm()}
+        context = {"form": CustomUserCreationForm()}
         return render(request, template, context)
 
     def post(self, request):
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if not form.is_valid():
             template = "users/signup.html"
             context = {"form": UserCreationForm(), "errors": form.errors}
