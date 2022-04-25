@@ -9,15 +9,17 @@ from catalog.forms import RatingForm
 from catalog.services import get_item_information
 
 
-def item_list(request):
-    template = "catalog/item_list.html"
-    items = Item.objects.prefetch_related(
-        Prefetch("tags", queryset=Tag.objects.filter(is_published=True))).order_by("?").filter(is_published=True).only(
-        "name", "text", "tags__name"
-    )
-    context = {"items": items}
+class ItemListView(View):
+    def get(self, request):
+        template = "catalog/item_list.html"
+        items = Item.objects.prefetch_related(
+            Prefetch("tags", queryset=Tag.objects.filter(is_published=True))).order_by("?").filter(
+            is_published=True).only(
+            "name", "text", "tags__name"
+        )
+        context = {"items": items}
 
-    return render(request, template, context)
+        return render(request, template, context)
 
 
 class ItemDetailView(View):

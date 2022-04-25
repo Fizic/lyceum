@@ -11,22 +11,24 @@ from users.models import UserWithBirthday
 from users.services import get_profile_data
 
 
-def user_list(request):
-    template = "users/user_list.html"
-    users = User.objects.all()
-    context = {"users": users}
-    return render(request, template, context)
+class UserListView(View):
+    def get(self, request):
+        template = "users/user_list.html"
+        users = User.objects.all()
+        context = {"users": users}
+        return render(request, template, context)
 
 
-def user_detail(request, pk: int):
-    template = "users/user_detail.html"
-    user = User.objects.get(id=pk)
-    ratings = user.rating.filter(star=5).select_related("item").only("item__name")
-    context = {"user": user, "ratings": ratings}
-    return render(request, template, context)
+class UserDetailView(View):
+    def get(self, request, pk: int):
+        template = "users/user_detail.html"
+        user = User.objects.get(id=pk)
+        ratings = user.rating.filter(star=5).select_related("item").only("item__name")
+        context = {"user": user, "ratings": ratings}
+        return render(request, template, context)
 
 
-class SignUp(View):
+class SignUpView(View):
     def get(self, request):
         template = "users/signup.html"
         context = {"form": UserCreationForm()}
@@ -44,7 +46,7 @@ class SignUp(View):
 
 
 @method_decorator(login_required, name='get')
-class Profile(View):
+class ProfileView(View):
     def get(self, request):
         template = "users/profile.html"
         context = get_profile_data(request)
