@@ -1,13 +1,14 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 
 
-class UserWithBirthday(models.Model):
-    user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.CASCADE)
+class ExtendedUser(AbstractUser):
+    username = models.CharField(unique=False, max_length=256)
+    email = models.EmailField(unique=True, max_length=256)
     birthday = models.DateField(verbose_name="День рождения", blank=True, null=True)
 
     def __str__(self):
-        return str(self.user)
+        return str(self.email)
 
     class Meta:
         verbose_name = "Расширенный пользователь"

@@ -59,6 +59,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'lyceum.urls'
 
+AUTHENTICATION_BACKENDS = [
+    'users.services.EmailAuthenticationBackend',
+]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -145,3 +149,4 @@ INTERNAL_IPS = [
 LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/auth/profile/'
 LOGOUT_REDIRECT_URL = '/auth/login/'
+AUTH_USER_MODEL = 'users.ExtendedUser'
