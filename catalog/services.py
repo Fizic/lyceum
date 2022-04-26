@@ -15,25 +15,27 @@ def get_item_information(request, item_id: int) -> dict:
     :return: context for html template
     """
     item = get_object_or_404(
-        Item.objects.prefetch_related(
+        Item.objects.get_all_itmes()
+        .prefetch_related(
             Prefetch("tags", queryset=Tag.objects.filter(is_published=True))
-        ).select_related(
-            "category"
-        ).only("name", "text", "category__name", "tags__name"), id=item_id
+        )
+        .select_related("category")
+        .only("name", "text", "category__name", "tags__name", "icon_image"),
+        id=item_id,
     )
 
     all_rating_for_item = item.rating.filter(star__gt=0)
     rating_count = all_rating_for_item.count()
 
     if rating_count:
-        average_rating = all_rating_for_item.aggregate(Avg('star'))["star__avg"]
+        average_rating = all_rating_for_item.aggregate(Avg("star"))["star__avg"]
     else:
         average_rating = 0
 
     context = {
         "item": item,
         "average_rating": average_rating,
-        "rating_count": rating_count
+        "rating_count": rating_count,
     }
 
     if not request.user.is_authenticated:
@@ -42,7 +44,9 @@ def get_item_information(request, item_id: int) -> dict:
     context["form"] = RatingForm()
     context["user"] = request.user
 
-    context["rating"], created = Rating.objects.get_or_create(user=request.user, item_id=item_id)
+    context["rating"], created = Rating.objects.get_or_create(
+        user=request.user, item_id=item_id
+    )
     if created:
         context["rating"].star = 0
         context["rating"].save()

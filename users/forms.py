@@ -16,8 +16,6 @@ class EmailAuthentication(forms.Form):
 
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-
     class Meta:
         model = ExtendedUser
-        fields = ['email']
+        fields = ["email"]

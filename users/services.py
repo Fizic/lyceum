@@ -17,9 +17,9 @@ def get_profile_data(request) -> dict:
 
 
 class EmailAuthenticationBackend(ModelBackend):
-    def authenticate(self, request, email=None, password=None):
+    def authenticate(self, request, username=None, password=None):
         try:
-            user = ExtendedUser.objects.get(email=email)
+            user = ExtendedUser.objects.get(email=username)
             if user.check_password(password):
                 return user
             else:
