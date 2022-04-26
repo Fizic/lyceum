@@ -1,9 +1,7 @@
-from django.db.models import Prefetch
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
-from catalog.models import Tag, Item
+from catalog.models import Category, Item
 from rating.models import Rating
 from catalog.forms import RatingForm
 from catalog.services import get_item_information
@@ -12,13 +10,11 @@ from catalog.services import get_item_information
 class ItemListView(View):
     def get(self, request):
         template = "catalog/item_list.html"
-        items = Item.objects.prefetch_related(
-            Prefetch("tags", queryset=Tag.objects.filter(is_published=True))).order_by("?").filter(
-            is_published=True).only(
-            "name", "text", "tags__name"
-        )
-        context = {"items": items}
-
+        categories = Category.objects.categories_and_items()
+        context = {
+            'categories': categories,
+            'user': request.user
+        }
         return render(request, template, context)
 
 
@@ -30,11 +26,10 @@ class ItemDetailView(View):
 
     def post(self, request, pk: int):
         form = RatingForm(request.POST)
-        if not form.is_valid():
-            return HttpResponse("Rating must be between 0 and 5")
 
-        rating = Rating.objects.get_or_create(user=request.user, item_id=pk)[0]
-        rating.star = int(form.cleaned_data["rating"][0])
-        rating.save()
-
-        return redirect("catalog:item-detail", pk=pk)
+        if form.is_valid():
+            item = Item.objects.get(pk=pk)
+            user_star, _ = Rating.objects.get_or_create(user=request.user, item=item, defaults={'star': 0})
+            user_star.star = form.cleaned_data['stars']
+            user_star.save()
+            return redirect('item_detail', pk)

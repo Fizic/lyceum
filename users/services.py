@@ -1,7 +1,9 @@
 from django.contrib.auth.backends import BaseBackend, UserModel, ModelBackend
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Prefetch
 
-from users.forms import ProfileForm
+from rating.models import Rating
+from users.forms import UserForm
 from users.models import ExtendedUser
 from django.contrib.auth import get_user_model
 
@@ -9,10 +11,14 @@ User = get_user_model()
 
 
 def get_profile_data(request) -> dict:
-    user = request.user
-    ratings = user.rating.filter(star=5).select_related("item").only("item__name")
-    form = ProfileForm()
-    context = {"user": user, "ratings": ratings, "form": form}
+    user = User.objects.filter(username=request.user.username).only('email', 'first_name',
+                                                                    'last_name').prefetch_related(
+        Prefetch('rating', queryset=Rating.objects.filter(star=5).only('item').select_related('item'))).first()
+    user_form = UserForm(instance=request.user)
+    context = {
+        'user': user,
+        'user_form': user_form
+    }
     return context
 
 
