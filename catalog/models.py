@@ -40,6 +40,14 @@ class Item(Published):
     def get_image_100x100(self):
         return get_thumbnail(self.icon_image, "100x100", upscale=False)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.icon_image:
+            image = Image.open(self.icon_image.path)
+            if image.height > 100 or image.width > 100:
+                image.thumbnail((100, 100), Image.ANTIALIAS)
+                image.save(self.icon_image.path)
+
     class Meta:
         verbose_name = "товар"
         verbose_name_plural = "товары"
@@ -63,6 +71,14 @@ class Gallery(models.Model):
 
     def __str__(self):
         return mark_safe(f"<img src='{self.image.url}' width='200' height='200'>")
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.image:
+            image = Image.open(self.image.path)
+            if image.height > 400 or image.width > 400:
+                image.thumbnail((400, 400), Image.ANTIALIAS)
+                image.save(self.image.path)
 
 
 class Tag(Slug):
