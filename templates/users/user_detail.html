@@ -1,16 +1,30 @@
 {% extends "base.html" %}
 
 {% block title %}Информация о пользователе{% endblock %}
-
 {% block content %}
-    <h3>Email</h3>
-    {{ user.email }}
-    <h3>Имя</h3>
-    {{ user.first_name }}
-    <h3>Фамилия</h3>
-    {{ user.last_name }}
-    <h3>Любимые товары</h3>
-    {% for rating in ratings %}
-        {{ rating.item }}
-    {% endfor %}
+  <h1 class="mb-5 mt-3">Информация о пользователе</h1>
+
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title">{{ detailed_user.username }}</h2>
+      {% if detailed_user.email %}
+        <h5 class="card-text">{{ detailed_user.email }}</h5>
+      {% endif %}
+      {% if detailed_user.first_name and detailed_user.last_name %}
+        <h5 class="card-text">{{ detailed_user.first_name }} {{ detailed_user.last_name }}</h5>
+      {% endif %}
+      {% if detailed_user.birthday %}
+        <p class="card-text">{{ detailed_user.birthday }}</p>
+      {% endif %}
+      {% if detailed_user.rating.all %}
+        <h4 class="card-text">Любимые товары:</h4>
+        <div class="list-group">
+          {% for rating in detailed_user.rating.all %}
+            <a href="{% url 'item_detail' rating.item.pk %}"
+               class="list-group-item list-group-item-action">{{ rating.item.name }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}

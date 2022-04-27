@@ -1,6 +1,15 @@
 <h2>{{ item.name }}</h2>
-{{ item.text|truncatewords:10 }}
+<img class="img-fluid" src="{{ item.get_image_100x100.url }}"
+    alt="{{ item.name }}">
+<p>{{ item.text|truncatewords:10 }}</p>
+<h4>Галлерея</h4>
+{% for image in item.gallery.all %}
+<img class="img-fluid" src="{{ image.get_image.url }}"
+    alt="сдесь должны быть ваши картинки">
+{% empty %}
+Картинок нет
+{% endfor %}
 <h4>tags</h4>
 {% for tag in item.tags.all %}
-    {{ tag.name }}
+{{ tag.name }}
 {% endfor %}
