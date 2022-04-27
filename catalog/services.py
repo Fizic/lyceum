@@ -31,24 +31,21 @@ def get_item_information(request, item_id: int) -> dict:
         average_rating = all_rating_for_item.aggregate(Avg("star"))["star__avg"]
     else:
         average_rating = 0
+    stars = Rating.objects.filter(item=item, star__in=list(
+        filter(lambda x: x != 0, map(lambda y: y[0], Rating.Feeling.choices)))).aggregate(Avg('star'), Count('star'))
 
     context = {
         "item": item,
         "average_rating": average_rating,
         "rating_count": rating_count,
+        'stars': stars,
+        'user': request.user
     }
 
     if not request.user.is_authenticated:
         return context
 
     context["form"] = RatingForm()
-    context["user"] = request.user
-
-    context["rating"], created = Rating.objects.get_or_create(
-        user=request.user, item_id=item_id
-    )
-    if created:
-        context["rating"].star = 0
-        context["rating"].save()
+    context["user_star"] = Rating.objects.filter(user=request.user, item=item).first()
 
     return context

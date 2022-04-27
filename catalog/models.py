@@ -1,6 +1,8 @@
 import random
 from django.db.models import Prefetch
 from django.db import models
+from django.db.models import Prefetch
+
 from PIL import Image
 from core.models import Published, Slug
 from . import validators
@@ -11,6 +13,12 @@ from django.utils.safestring import mark_safe
 class ItmeManager(models.Manager):
     def get_all_itmes(self):
         return self.get_queryset().prefetch_related("gallery")
+
+
+class ItemManager(models.Manager):
+    def published_tags(self):
+        return self.get_queryset().filter(is_published=True).only('name', 'text').prefetch_related(
+            Prefetch('tags', queryset=Tag.objects.filter(is_published=True).only('name')))
 
 
 class Item(Published):
@@ -35,7 +43,7 @@ class Item(Published):
         verbose_name="иконка товара", upload_to="uploads/", null=True
     )
 
-    objects = ItmeManager()
+    objects = ItemManager()
 
     def get_image_100x100(self):
         return get_thumbnail(self.icon_image, "100x100", upscale=False)
@@ -92,9 +100,17 @@ class Tag(Slug):
         return str(self.slug)
 
 
+class CategoryManager(models.Manager):
+    def categories_and_items(self):
+        return self.get_queryset().filter(is_published=True).only('name').prefetch_related(
+            Prefetch('items', queryset=Item.objects.filter(is_published=True))).prefetch_related(
+            Prefetch('items__tags', queryset=Tag.objects.filter(is_published=True).only('name')))
+
+
 class Category(Slug):
     name = models.CharField("название категории", max_length=150)
     weight = models.PositiveSmallIntegerField("масса", default=100)
+    objects = CategoryManager()
 
     class Meta:
         verbose_name = "категория"
