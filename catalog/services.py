@@ -1,4 +1,4 @@
-from django.db.models import Prefetch, Avg
+from django.db.models import Prefetch, Avg, Count
 from django.shortcuts import get_object_or_404
 
 from catalog.forms import RatingForm
@@ -15,7 +15,7 @@ def get_item_information(request, item_id: int) -> dict:
     :return: context for html template
     """
     item = get_object_or_404(
-        Item.objects.get_all_itmes()
+        Item.objects.get_all_items()
         .prefetch_related(
             Prefetch("tags", queryset=Tag.objects.filter(is_published=True))
         )

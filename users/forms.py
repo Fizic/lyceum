@@ -6,6 +6,12 @@ from django.utils.translation import gettext_lazy as _
 from .models import ExtendedUser
 
 
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = ExtendedUser
+        fields = ["email"]
+
+
 class UserForm(forms.ModelForm):
     username = forms.CharField(label='Имя пользователя', max_length=150, required=True,
                                widget=forms.TextInput(attrs={'class': 'form-control'}))

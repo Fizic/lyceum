@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .forms import CustomUserCreationForm
+from users.forms import CustomUserCreationForm
 from users.models import ExtendedUser
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
+
 
 
 @admin.register(ExtendedUser)

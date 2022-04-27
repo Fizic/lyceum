@@ -10,12 +10,10 @@ from sorl.thumbnail import get_thumbnail
 from django.utils.safestring import mark_safe
 
 
-class ItmeManager(models.Manager):
-    def get_all_itmes(self):
+class ItemManager(models.Manager):
+    def get_all_items(self):
         return self.get_queryset().prefetch_related("gallery")
 
-
-class ItemManager(models.Manager):
     def published_tags(self):
         return self.get_queryset().filter(is_published=True).only('name', 'text').prefetch_related(
             Prefetch('tags', queryset=Tag.objects.filter(is_published=True).only('name')))
