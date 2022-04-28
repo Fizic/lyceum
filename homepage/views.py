@@ -1,29 +1,14 @@
-import random
-
+from django.db.models import Prefetch
 from django.shortcuts import render
-from django.views import View
 
-from catalog.models import Item
+from catalog.models import Item, Category, Tag
 
 
-class HomeView(View):
-    def get(self, request):
-        template = 'homepage/home.html'
-        items = Item.objects.published_tags()
-        count = items.count()
-        if not count:
-            context = {}
-        elif count < 3:
-            context = {
-                'items': items,
-                'user': request.user
-            }
-        else:
-            valid_ids = items.values_list('id', flat=True)
-            random_ids = random.sample(list(valid_ids), 3)
-            random_items = items.filter(id__in=random_ids)
-            context = {
-                'items': random_items,
-                'user': request.user
-            }
-        return render(request, template, context)
+def home(request):
+    template = "homepage/home.html"
+    items = Item.objects.prefetch_related(Prefetch("tags", queryset=Tag.objects.filter(is_published=True))).filter(
+        is_published=True).order_by("?").only("name", "text", "tags__name")[:3]
+    is_authenticated = request.user.is_authenticated
+    context = {"items": items, "is_authenticated": is_authenticated}
+
+    return render(request, template, context)
