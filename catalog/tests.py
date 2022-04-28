@@ -6,12 +6,13 @@ from django.test import Client
 from django.test import TestCase
 
 from catalog.models import Item
+from users.models import ExtendedUser
 
 
 class ItemDetailTest(TestCase):
     def setUp(self):
         self.test_item_1 = Item.objects.create(name="test", text="text роскошно")
-        self.test_user_1 = User.objects.create_user(username="admin", password="admin")
+        self.test_user_1 = ExtendedUser.objects.create_user(email="test@test.com", password="admin")
 
     def test_item_info(self):
         csrf_client = Client(enforce_csrf_checks=True)
@@ -23,18 +24,18 @@ class ItemDetailTest(TestCase):
         response = csrf_client.get("/catalog/{pk}/".format(pk=self.test_item_1.id))
         self.assertEqual(response.context["user"].username, "")
 
-    def item_detail_authorized_view_without_rating(self, username: str, password: str, test_user: User):
+    def item_detail_authorized_view_without_rating(self, email: str, password: str, test_user: User):
         csrf_client = Client(enforce_csrf_checks=True)
-        csrf_client.login(username=username, password=password)
+        csrf_client.login(email=email, password=password)
         response = csrf_client.get("/catalog/{pk}/".format(pk=self.test_item_1.id))
         self.assertEqual(response.context["user"], test_user)
 
     def test_item_detail(self):
         for _ in range(10):
-            username = ''.join(random.choices(string.ascii_letters, k=10))
+            email = ''.join(random.choices(string.ascii_letters, k=10)) + '@test.com'
             password = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
-            test_user = User.objects.create_user(username=username, password=password)
-            self.item_detail_authorized_view_without_rating(username, password, test_user)
+            test_user = ExtendedUser.objects.create_user(email=email, password=password)
+            self.item_detail_authorized_view_without_rating(email, password, test_user)
             self.item_detail_unauthorized_view()
 
     def test_item_set_rating(self):

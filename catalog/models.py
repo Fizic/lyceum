@@ -101,8 +101,8 @@ class Tag(Slug):
 class CategoryManager(models.Manager):
     def categories_and_items(self):
         return self.get_queryset().filter(is_published=True).only('name').prefetch_related(
-            Prefetch('items', queryset=Item.objects.filter(is_published=True))).prefetch_related(
-            Prefetch('items__tags', queryset=Tag.objects.filter(is_published=True).only('name')))
+            Prefetch('catalog_items', queryset=Item.objects.filter(is_published=True))).prefetch_related(
+            Prefetch('catalog_items__tags', queryset=Tag.objects.filter(is_published=True).only('name')))
 
 
 class Category(Slug):

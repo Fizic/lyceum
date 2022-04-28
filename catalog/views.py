@@ -35,3 +35,5 @@ class ItemDetailView(View):
             user_star.star = form.cleaned_data['stars']
             user_star.save()
             return redirect('item_detail', pk)
+
+        return HttpResponse('Rating must be between 0 and 5')
