@@ -11,6 +11,6 @@ def get_birthday_people(request):
     birth_today = (
         User.objects.filter(birthday__month=cur_date_month)
         .filter(birthday__day=cur_date_day)
-        .values("email")
+        .values("email", "pk")
     )
     return {"birth_today": birth_today}

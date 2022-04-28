@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "rating.apps.RatingConfig",
     "sorl.thumbnail",
     "django_cleanup.apps.CleanupConfig",
+    "tinymce"
 ]
 
 MIDDLEWARE = [

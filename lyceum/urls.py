@@ -25,6 +25,7 @@ urlpatterns = [
     path('about/', include('about.urls'), name='about'),
     path('auth/', include('users.urls'), name='auth'),
     path('auth/', include('django.contrib.auth.urls')),
+    path('tinymce/', include('tinymce.urls')),
     path('', include('homepage.urls'), name='homepage'),
 ]
 

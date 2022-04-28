@@ -2,41 +2,32 @@
 
 <!DOCTYPE html>
 <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}Дефолтный заголовок{% endblock %}</title>
-        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-        <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
-        <link rel="apple-touch-icon" sizes="120x120" href="{% static
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Дефолтный заголовок{% endblock %}</title>
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+  <link rel="apple-touch-icon" sizes="120x120" href="{% static
             'favicons/apple-touch-icon.png' %}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{% static
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static
             'favicons/favicon-32x32.png' %}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{% static
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static
             'favicons/favicon-16x16.png' %}">
-        <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
-        <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg'
+  <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
+  <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg'
             %}" color="#5bbad5">
-        <meta name="msapplication-TileColor" content="#da532c">
-        <meta name="theme-color" content="#ffffff">
-    </head>
-    <body class="text-center">
-        <header>
-            {% include "includes/header.html" %}
-            <h4>Наши именниники:</h4>
-            <ul>
-                {% for birth in birth_today %}
-                <li>{{ birth.email }}</li>
-                {% empty %}
-                <p>Сегодня иммениников нет.</p>
-                {% endfor %}
-            </ul>
-        </header>
-        <main>
-            {% block content %}{% endblock %}
-        </main>
-        <footer>
-            {% include "includes/footer.html" %}
-        </footer>
-    </body>
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+{% include "includes/header.html" %}
+
+<div class="container">
+{% block content %}
+  <p>Контент не подвезли</p>
+{% endblock %}
+
+{% include "includes/footer.html" %}
+</body>
 </html>

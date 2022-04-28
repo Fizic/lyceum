@@ -4,11 +4,20 @@
 
 {% block title %}Главная{% endblock %}
 {% block content %}
-    <h1 class="mb-5 mt-3">Главная страница</h1>
+  <h1 class="my-3">Главная страница</h1>
 
-    {% for item in items %}
-        {% include "includes/item_card.html" %}
+  <h4>Наши именинники:</h4>
+  <div class="list-group mb-5">
+    {% for birth in birth_today %}
+      <a href="{% url 'user_detail' birth.pk %}" class="list-group-item list-group-item-action">{{ birth.email }}</a>
     {% empty %}
-        <p>Список пуст. Эй, админ, добавь инфы!</p>
+      <p>Сегодня именинников нет</p>
     {% endfor %}
+  </div>
+
+  {% for item in items %}
+    {% include "includes/item_card.html" %}
+  {% empty %}
+    <p>Список пуст. Эй, админ, добавь инфы!</p>
+  {% endfor %}
 {% endblock %}

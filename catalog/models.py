@@ -1,5 +1,4 @@
 import random
-from django.db.models import Prefetch
 from django.db import models
 from django.db.models import Prefetch
 
@@ -8,6 +7,7 @@ from core.models import Published, Slug
 from . import validators
 from sorl.thumbnail import get_thumbnail
 from django.utils.safestring import mark_safe
+from tinymce.models import HTMLField
 
 
 class ItemManager(models.Manager):
@@ -21,11 +21,8 @@ class ItemManager(models.Manager):
 
 class Item(Published):
     name = models.CharField("имя товара", max_length=150)
-    text = models.TextField(
-        verbose_name="описание",
-        validators=[validators.text_validator],
-        default=random.choice(["роскошно", "превосходно"]),
-    )
+    text = HTMLField(verbose_name="описание", validators=[validators.text_validator],
+                     default=random.choice(["роскошно", "превосходно"]), )
     category = models.ForeignKey(
         to="Category",
         verbose_name="категория",
