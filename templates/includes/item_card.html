@@ -3,8 +3,10 @@
     <div class="card-body">
       <div class="card-title">
         <h5>{{ item.name }}</h5>
+        <img src="{{ item.get_image_100x100.url }}" alt="{{ item.name }}"
+          class="img-fluid">
         {% for tag in item.tags.all %}
-          <span class="badge bg-secondary">{{ tag.name }}</span>
+        <span class="badge bg-secondary">{{ tag.name }}</span>
         {% endfor %}
       </div>
       <p class="card-text">Описание: {{ item.text|truncatewords:10 }}</p>

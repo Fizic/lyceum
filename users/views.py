@@ -16,25 +16,29 @@ User = get_user_model()
 
 class UserListView(View):
     def get(self, request):
-        template = 'users/user_list.html'
-        users = User.objects.only('username')
-        context = {
-            'user': request.user,
-            'users': users
-        }
+        template = "users/user_list.html"
+        users = User.objects.only("username")
+        context = {"user": request.user, "users": users}
         return render(request, template, context)
 
 
 class UserDetailView(View):
     def get(self, request, pk: int):
-        template = 'users/user_detail.html'
-        detailed_user = User.objects.filter(pk=pk).only('email', 'first_name', 'last_name').prefetch_related(
-            Prefetch('rating', queryset=Rating.objects.filter(star=5).only('item').select_related('item'))).first()
-        context = {
-            'pk': pk,
-            'user': request.user,
-            'detailed_user': detailed_user
-        }
+        template = "users/user_detail.html"
+        detailed_user = (
+            User.objects.filter(pk=pk)
+            .only("email", "first_name", "last_name")
+            .prefetch_related(
+                Prefetch(
+                    "rating",
+                    queryset=Rating.objects.filter(star=5)
+                    .only("item")
+                    .select_related("item"),
+                )
+            )
+            .first()
+        )
+        context = {"pk": pk, "user": request.user, "detailed_user": detailed_user}
         return render(request, template, context)
 
 
@@ -49,25 +53,22 @@ class SignUpView(View):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('profile')
+            return redirect("profile")
 
 
 class LoginView(View):
     def get(self, request):
         template = "users/login.html"
         form = BeautifulAuthenticationForm()
-        context = {
-            "form": form,
-            'user': request.user
-        }
+        context = {"form": form, "user": request.user}
         return render(request, template, context)
 
     def post(self, request):
         form = BeautifulAuthenticationForm(request.POST)
 
         if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
             user = authenticate(request, email=email, password=password)
             if user is not None:
                 login(request, user)
@@ -87,8 +88,10 @@ class ProfileView(View):
 
         if form.is_valid():
             user = request.user
-            user.email = form.cleaned_data['email']
-            user.username = form.cleaned_data['username']
-            user.birthday = form.cleaned_data['birthday']
+            user.email = form.cleaned_data["email"]
+            user.username = form.cleaned_data["username"]
+            user.birthday = form.cleaned_data["birthday"]
             user.save()
             return redirect("profile")
+        else:
+            return self.get(request)

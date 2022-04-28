@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
+import datetime
 
 
 class UserManager(BaseUserManager):
@@ -32,7 +33,7 @@ class UserManager(BaseUserManager):
 
 
 class ExtendedUser(AbstractUser):
-    username = models.CharField(unique=False, max_length=256)
+    username = models.CharField(unique=False, max_length=256, blank=True)
     email = models.EmailField(unique=True, max_length=256)
     birthday = models.DateField(verbose_name="День рождения", blank=True, null=True)
 
@@ -40,10 +41,14 @@ class ExtendedUser(AbstractUser):
     REQUIRED_FIELDS = []
     objects = UserManager()
 
+    def get_birthday(self):
+        return self.birthday.strftime("%m-%d")
+
     def __str__(self):
         return str(self.email)
 
     class Meta:
         ordering = ["email"]
         verbose_name = "Расширенный пользователь"
+        swappable = "AUTH_USER_MODEL"
         verbose_name_plural = "Расширенные пользователи"

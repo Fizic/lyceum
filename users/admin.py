@@ -5,7 +5,6 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 
 
-
 @admin.register(ExtendedUser)
 class ExtendedUserAdmin(BaseUserAdmin):
     model = ExtendedUser
@@ -27,8 +26,8 @@ class ExtendedUserAdmin(BaseUserAdmin):
         ),
     )
     fieldsets = (
-        (None, {"fields": ("username", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name", "email")}),
+        (None, {"fields": ("email", "password")}),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "username")}),
         (
             _("Permissions"),
             {

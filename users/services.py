@@ -11,21 +11,29 @@ User = get_user_model()
 
 
 def get_profile_data(request) -> dict:
-    user = User.objects.filter(username=request.user.username).only('email', 'first_name',
-                                                                    'last_name').prefetch_related(
-        Prefetch('rating', queryset=Rating.objects.filter(star=5).only('item').select_related('item'))).first()
+    user = (
+        User.objects.filter(username=request.user.username)
+        .only("email", "first_name", "last_name")
+        .prefetch_related(
+            Prefetch(
+                "rating",
+                queryset=Rating.objects.filter(star=5)
+                .only("item")
+                .select_related("item"),
+            )
+        )
+        .first()
+    )
     user_form = UserForm(instance=request.user)
-    context = {
-        'user': user,
-        'user_form': user_form
-    }
+    context = {"user": user, "user_form": user_form}
     return context
 
 
 class EmailAuthenticationBackend(ModelBackend):
-    def authenticate(self, request, email=None, password=None):
+    def authenticate(self, request, username=None, email=None, password=None, **kwargs):
+        print(username, email)
         try:
-            user = ExtendedUser.objects.get(email=email)
+            user = ExtendedUser.objects.get(email=(username or email))
             if user.check_password(password):
                 return user
             else:
