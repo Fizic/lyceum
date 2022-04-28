@@ -5,10 +5,10 @@
   <h1 class="mb-5 mt-3">Список товаров</h1>
   {% for category in categories %}
     <div class="mb-5">
-      {% if category.items.all %}
+      {% if category.catalog_items.all %}
         <h2 class="mb-3">{{ category.name }}</h2>
         <div class="mb-3">
-          {% for item in category.items.all %}
+          {% for item in category.catalog_items.all %}
             {% include "includes/item_card.html" %}
           {% endfor %}
         </div>
