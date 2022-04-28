@@ -1,14 +1,33 @@
 {% extends "base.html" %}
 
-
-
 {% block title %}Главная{% endblock %}
-{% block content %}
-    <h1 class="mb-5 mt-3">Главная страница</h1>
 
-    {% for item in items %}
-        {% include "includes/item_card.html" %}
-    {% empty %}
-        <p>Список пуст. Эй, админ, добавь инфы!</p>
-    {% endfor %}
+{% block content %}
+    <div class="container">
+        <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+                <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            {% if not is_authenticated %}
+                <div class="col-md-3 text-end">
+                    <a href="/auth/login/">
+                        <button type="button" class="btn btn-outline-primary me-2">Login</button>
+                    </a>
+                    <a href="/auth/signup/">
+                        <button type="button" class="btn btn-primary">Sign-up</button>
+                    </a>
+                </div>
+            {% endif %}
+        </header>
+    </div>
+    Главная
+    {% if items %}
+        {% for item in items %}
+            {% include "includes/base_item_list.html" %}
+        {% endfor %}
+    {% else %}
+        <h3>Список пуст. Эй, админ, добавь инфы!</h3>
+    {% endif %}
 {% endblock %}

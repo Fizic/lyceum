@@ -1,20 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Список товаров{% endblock %}
+{% block title %}Список элементов{% endblock %}
+
 {% block content %}
-  <h1 class="mb-5 mt-3">Список товаров</h1>
-  {% for category in categories %}
-    <div class="mb-5">
-      {% if category.items.all %}
-        <h2 class="mb-3">{{ category.name }}</h2>
-        <div class="mb-3">
-          {% for item in category.items.all %}
-            {% include "includes/item_card.html" %}
-          {% endfor %}
-        </div>
-      {% endif %}
-    </div>
-  {% empty %}
-    <h2>Список пуст. Эй, админ, добавь инфы!</h2>
-  {% endfor %}
+    Список элементов
+    {% if items %}
+        {% for item in items %}
+            {% include "includes/base_item_list.html" %}
+        {% endfor %}
+    {% else %}
+        <h3>Список пуст. Эй, админ, добавь инфы!</h3>
+    {% endif %}
 {% endblock %}
